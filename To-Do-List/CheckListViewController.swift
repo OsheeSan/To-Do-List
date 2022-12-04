@@ -19,8 +19,13 @@ class ChecklistViewController: UITableViewController {
     let row3item = CheckListItem()
     let row4item = CheckListItem()
     
+    var ViewBackgroundColor = UIColor.black
+    var textColor = UIColor.white
+    var themeColor = UIColor.orange
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.prefersLargeTitles = true
         let item1 = CheckListItem()
         item1.text = "Walk the dog"
         items.append(item1)
@@ -50,7 +55,7 @@ class ChecklistViewController: UITableViewController {
         _ tableView: UITableView,
         numberOfRowsInSection section: Int
     ) -> Int {
-        return 5
+        return items.count
     }
     
     override func tableView(
@@ -66,12 +71,27 @@ class ChecklistViewController: UITableViewController {
     }
     
     override func tableView(
+      _ tableView: UITableView,
+      commit editingStyle: UITableViewCell.EditingStyle,
+      forRowAt indexPath: IndexPath
+    ) {
+      // 1
+      items.remove(at: indexPath.row)
+
+      // 2
+      let indexPaths = [indexPath]
+      tableView.deleteRows(at: indexPaths, with: .automatic)
+    }
+    
+    override func tableView(
         _ tableView: UITableView,
         cellForRowAt indexPath: IndexPath
     ) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(
             withIdentifier: "ChecklistItem",
             for: indexPath)
+        
+//        cell.backgroundColor = ViewBackgroundColor
         
         let item = items[indexPath.row]
         
@@ -98,7 +118,23 @@ class ChecklistViewController: UITableViewController {
         with item: CheckListItem
     ) {
         let label = cell.viewWithTag(1000) as! UILabel
+//        cell.tintColor = themeColor
         label.text = item.text
+//        label.textColor = textColor
+    }
+    
+    // MARK: - Actions
+    
+    @IBAction func addItem(){
+          let newRowIndex = items.count
+
+          let item = CheckListItem()
+          item.text = "I am a new row"
+          items.append(item)
+
+          let indexPath = IndexPath(row: newRowIndex, section: 0)
+          let indexPaths = [indexPath]
+          tableView.insertRows(at: indexPaths, with: .automatic)
     }
     
 }
